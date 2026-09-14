@@ -4,19 +4,22 @@
 gcc hello.c -o hello.exe\
 .\hello.exe\
 自动：ctrl+alt+n
-## 数据类型：int,float,double,char
+## 数据类型：int,float,double,char.long
 ### int(整型)
 **长度4字节**\
 取值范围：-2147483648~2147483647\
 占位符：%d
 
 ### float(单浮点)
-**长度也是4字节**\
+**长度在32位中4字节，64位中8字节**\
 占位符：%f
 
 ### double(双浮点)
 **长度8字节**\
 占位符：%If
+
+### long
+**长度在32位是4个字节，在64位是8个字节**
 
 ### char(字符型)
 **长度1字节**\
@@ -25,6 +28,15 @@ gcc hello.c -o hello.exe\
 ### bool(布尔型)
 **长度1字节**\
 只有true和false
+
+### 无符号数
+unsighed int\
+unsighed short\
+unsigned char\
+unsighed long
+
+### 指针大小：32位4个字节，64位8个字节
+
 ## 常量
 ```c
 #define PI 3.14//定义常量PI
@@ -97,4 +109,9 @@ int main()
     free(A);
     return 0;
 }
+```
+指针就是地址
+```c
+int age=100;
+int *p=&a;
 ```
