@@ -19,5 +19,6 @@ int main(int argc,char const *argv[]){
     student *s=(student*)malloc(sizeof(student));
     initialStu(s);
     printf("%s-%s-%d\n",s->stuId,s->stuName,s->age);
+    free(s);
     return 0;
 }
