@@ -95,16 +95,15 @@ public:
         if(p!=nullptr) return p->data();
         else throw std::out_of_range("错误，原因：位置不合法。");
     }
-    Node<T>* Search(T d)const{
-        if(head->pernext==nullptr) throw std::runtime_error("错误，原因：空表无法查询。");
+    Node<T>* Search(const T& d)const{
         Node<T> *p=head->next();
-        while(p!=nullptr && d==p->data()){
+        while(p!=nullptr && d!=p->data()){
             p=p->next();
         }
-        if(d==p->data()) return p;
-        else throw std::runtime_error("错误，原因：未查询到指定元素。");
+        if(p!=nullptr) return p;
+        else throw std::runtime_error("错误，原因：空表或未查询到指定元素。");
     }
-    void Insert(int n,T d){
+    void Insert(int n,const T& d){
         if(n<1) throw std::out_of_range("错误，原因：位置不合法。");
         Node<T> *p=head;
         for(int i=0;i<n-1 && p!=nullptr;i++){
@@ -156,7 +155,7 @@ public:
     ~DoubleLinkedList(){
         while(head!=nullptr){
             DNode<T> *temp=head;
-            head=head->pernext;
+            head=head->next();
             delete temp;
         }
     }
@@ -181,10 +180,18 @@ public:
         if(p!=nullptr) return p->data();
         else throw std::out_of_range("错误，原因：位置不合法");
     }
-    //Dnode<T>* Search()
-    void Insert(int n,T d){
+    DNode<T>* Search(const T& d)const{
+        DNode<T> *p=head;
+        while(p!=nullptr && d!=p->data()){
+            p=p->next();
+        }
+        if(p!=nullptr) return p;
+        else throw std::runtime_error("错误，原因：空表或未查询到指定元素。");
+    }
+    void Insert(int n,const T& d){
         if(n<1) throw std::out_of_range("错误，原因：位置不合法。");
         if(head==nullptr){
+            if(n!=1) throw std::out_of_range("错误，原因：位置不合法。");
             head=new DNode<T>(d,nullptr,nullptr);
             return;
         }
@@ -195,17 +202,47 @@ public:
             return;
         }
         DNode<T>* p=head;
-        for(int i=0;i<n-2 && p->next()!=nullptr;i++){
+        int i;
+        for(i=1;i<n-1 && p->next()!=nullptr;i++){
             p=p->next();
         }
+        if(i<n-1) throw std::out_of_range("错误，原因：位置不合法。");
         DNode<T> *newNode=new DNode<T>(d,p,p->next());
         if(p->next()!=nullptr) p->next()->setPrior(newNode);
         p->setNext(newNode);
     }
-    //void Remove()
-    //Dnode<T>* Reset()
-    //bool hasNext()
-    //Dndoe<T>* next()
+    void Remove(int n){
+        if(n<1 || IsEmpty()) throw std::out_of_range("错误，原因：空表或位置不合法。");
+        if(n==1){
+            DNode<T> *temp=head;
+            head=head->next();
+            if(head!=nullptr) head->setPrior(nullptr);
+            delete temp;
+            return;
+        }
+        DNode<T> *p=head;
+        int i;
+        for(i=1;i<n-1;i++){
+            if(p->next()==nullptr) throw std::out_of_range("错误，原因：位置不合法");
+            p=p->next();
+        }
+        DNode<T> *temp=p->next();
+        if(temp==nullptr) throw std::out_of_range("错误，原因：位置不合法。");
+        p->setNext(temp->next());
+        if(temp->next()!=nullptr) temp->next()->setPrior(p);
+        delete p;
+    }
+    DNode<T>* Reset(){
+        current=head;
+        return current;
+    }
+    bool hasNext(){
+        return current!=nullptr && current->next()!=nullptr;
+    }
+    DNode<T>* next(){
+        if(current!=nullptr) {current=current->next();return current;}
+        else throw std::out_of_range("错误，原因：空姐带你无后继");
+    }
 };
 
 void ListSLL(SinglyLinkedList<int>& l,int n){
@@ -220,14 +257,34 @@ void ListSLL(SinglyLinkedList<int>& l,int n){
     else throw std::out_of_range("错误，原因：空表无法打印。");
 }
 
+void ListSLL(DoubleLinkedList<int>& l,int n){
+    if(!l.IsEmpty()){
+        DNode<int> *p=l.Reset();
+        while(l.hasNext()){
+            p=l.next();
+            std::cout << p->data() << " ";
+        }
+        std::cout << std::endl;
+    }
+    else throw std::out_of_range("错误，原因：空表无法打印。");
+}
+
 int main(int argc,char **argv){
     int a[] = {1,2,3,4,5,6,7};
-    SinglyLinkedList<int> list;
+    SinglyLinkedList<int> list1;
     for(int i=0; i<7; i++) {
-        list.Insert(1, a[i]);
+        list1.Insert(1, a[i]);
     }
-    ListSLL(list,list.length());
-    list.Remove(3);
-    ListSLL(list,list.length());
+    ListSLL(list1,list1.length());
+    list1.Remove(3);
+    ListSLL(list1,list1.length());
+    int b[] = {1,2,3,4,5,6,7};
+    DoubleLinkedList<int> list2;
+    for(int i=0; i<7; i++) {
+        list2.Insert(1, a[i]);
+    }
+    ListSLL(list2,list2.length());
+    list2.Remove(3);
+    ListSLL(list2,list2.length());
     return 0;
 }
