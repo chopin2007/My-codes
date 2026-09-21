@@ -245,6 +245,84 @@ public:
     }
 };
 
+//循环双向链表
+template<typename T>
+class CycleLinkedList{
+private:
+    DNode<T>* head;
+    DNode<T>* current;
+public:
+    CycleLinkedList(){
+        head=nullptr;
+        current=nullptr;
+    }
+    ~CycleLinkedList(){
+        while(head!=nullptr){
+            DNode<T> temp=head;
+            head=head->next();
+            delete temp;
+        }
+    }
+    bool IsEmpty(){
+        return head==nullptr;
+    }
+    int length(){
+        DNode<T> *p=head;
+        int count=0;
+        while(p!=nullptr){
+            p=p->next();
+            count++;
+        }
+        return count;
+    }
+    T Get(int n)const{
+        if(n<1 || IsEmpty()) throw std::out_of_range("错误，原因：空表或位置不合法。");
+        DNode<T> *p=head;
+        int j=n;
+        while(j>length()){
+            j=j%length();
+        }
+        for(int i=0;i<j-1;i++){
+            p=p->next();
+        }
+        return p->data();
+    }
+    //T Get()
+    DNode<T>* Search(const T& d)const{
+        if(IsEmpty()) throw std::out_of_range("错误，原因：空表。");
+        DNode<T> *p=head;
+        for(int i=0;i<length();i++){
+            if(p->data==d) break;
+            p=p->next();
+        }
+        if(p->data==d) return p;
+        else throw std::runtime_error("错误，原因：未查询到指定元素。");
+    }
+    void Insert(int n,const T& d){
+        if(n<1 || n>length()+1) throw std::out_of_range("错误，原因：位置不合法。");
+        if(IsEmpty()){
+            DNode<T> *p=new DNode<T>(d);
+            p->setPrior(p);
+            p->setNext(p);
+            head=p;
+            return;
+        }
+        DNode<T> *p=head;
+        for(int i=0;i<n && p->next();i++){
+            p=p->next();
+        }
+        DNode<T> *newNode=new DNode<T>(d);
+        newNode->setNext(p);
+        newNode->setPrior(p->prior);
+        p->prior()->setNext(newNode);
+        p->prior(newNode);
+        if(n==1) head==newNode;
+    }
+    //void Remove()
+    //DNode<T>* Reset()
+    //DNode<T>* next()
+};
+
 void ListSLL(SinglyLinkedList<int>& l,int n){
     if(!l.IsEmpty()){
         Node<int> *p=l.Reset();
