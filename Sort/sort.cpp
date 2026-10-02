@@ -3,6 +3,14 @@
 #include<string>
 #include<vector>
 
+
+void traversal(std::vector<int>& list){
+    for(int i=0;i<list.size();i++){
+        std::cout << list[i] << ' ';
+    }
+    std::cout << std::endl;
+}
+
 void InsertionSort(std::vector<int>& list){
     for(int i=1;i<list.size();i++){
         int e=list[i];
@@ -12,7 +20,9 @@ void InsertionSort(std::vector<int>& list){
             j--;
         }
         list[j]=e;
+        traversal(list);
     }
+    traversal(list);
 }
 
 void BubbleSort(std::vector<int>& list){
@@ -24,23 +34,42 @@ void BubbleSort(std::vector<int>& list){
                 list[j]=temp;
             }
         }
+        traversal(list);
     }
+    traversal(list);
 }
 
 void SelectionSort(std::vector<int>& list){
     for(int i=0;i<list.size();i++){
-        int min=list[i];
-        int index=i;
+        int minindex=i;
         for(int j=i;j<list.size();j++){
-            if(list[j]<min){
-                min=list[j];
-                index=j;
+            if(list[j]<list[minindex]){
+                minindex=j;
             }
         }
-        int temp=list[i];
-        list[i]=min;
-        list[index]=temp;
+        std::swap(list[minindex],list[i]);
+        traversal(list);
     }
+    traversal(list);
+}
+
+void PancakeSort(std::vector<int>& list){
+    for(int i=0;i<list.size();i++){
+        int maxindex=0;
+        for(int j=0;j<list.size()-i;j++){
+            if(list[j]>list[maxindex]){
+                maxindex=j;
+            }
+        }
+        for(int j=0;j<=maxindex/2;j++){
+            std::swap(list[j],list[maxindex-j]);
+        }
+        for(int j=0;j<=(list.size()-i-1)/2;j++){
+            std::swap(list[j],list[list.size()-i-1-j]);
+        }
+        traversal(list);
+    }
+    traversal(list);
 }
 
 int main(int argc,char **argv){
@@ -57,14 +86,16 @@ int main(int argc,char **argv){
     switch(choice){
         case 0:
             InsertionSort(arr);
+            break;
         case 1:
             BubbleSort(arr);
+            break;
         case 2:
             SelectionSort(arr);
+            break;
+        case 3:
+            PancakeSort(arr);
+            break;
     }
-    for(int i=0;i<arr.size();i++){
-        std::cout << arr[i] << ' ';
-    }
-    std::cout << std::endl;
     return 0;
 }
