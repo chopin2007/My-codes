@@ -72,6 +72,23 @@ void PancakeSort(std::vector<int>& list){
     traversal(list);
 }
 
+void BubbleSortPlus(std::vector<int>& list){
+    for(int i=0;i<list.size();i++){
+        bool flag=true;
+        for(int j=list.size()-1-i;j>0;j--){
+            if(list[j]<list[j-1]){
+                flag=false;
+                int temp=list[j-1];
+                list[j-1]=list[j];
+                list[j]=temp;
+            }
+        }
+        if(flag) break;
+        traversal(list);
+    }
+    traversal(list);
+}
+
 int main(int argc,char **argv){
     std::string in;
     std::getline(std::cin,in);
@@ -95,6 +112,9 @@ int main(int argc,char **argv){
             break;
         case 3:
             PancakeSort(arr);
+            break;
+        case 4:
+            BubbleSortPlus(arr);
             break;
     }
     return 0;
