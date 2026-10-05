@@ -89,6 +89,33 @@ void BubbleSortPlus(std::vector<int>& list){
     traversal(list);
 }
 
+int partition(std::vector<int>& list,int l,int r){
+    int i=l;
+    int j=r-1;
+    int m=list[r];
+    while(i<=j){
+        while(i<=j && list[i]<m){i++;}
+        while(i<=j && list[j]>m){j--;}
+        if(i<=j){
+            int temp=list[i];
+            list[i++]=list[j];
+            list[j--]=temp;
+        }
+    }
+    int temp=list[i];
+    list[i]=list[r];
+    list[r]=temp;
+    return i;
+}
+
+void QuickSort(std::vector<int>& list,int l,int r){
+    if(l<r){
+        int i=partition(list,l,r);
+        QuickSort(list,l,i-1);
+        QuickSort(list,i+1,r);
+    }
+}
+
 int main(int argc,char **argv){
     std::string in;
     std::getline(std::cin,in);
@@ -115,6 +142,10 @@ int main(int argc,char **argv){
             break;
         case 4:
             BubbleSortPlus(arr);
+            break;
+        case 5:
+            QuickSort(arr,0,arr.size()-1);
+            traversal(arr);
             break;
     }
     return 0;
