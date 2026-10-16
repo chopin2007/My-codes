@@ -3,118 +3,144 @@
 #include<string>
 #include<vector>
 
-
-void traversal(std::vector<int>& list){
-    for(int i=0;i<list.size();i++){
-        std::cout << list[i] << ' ';
-    }
-    std::cout << std::endl;
-}
-
-void InsertionSort(std::vector<int>& list){
-    for(int i=1;i<list.size();i++){
-        int e=list[i];
-        int j=i;
-        while(j>0 && list[j-1]>e){
-            list[j]=list[j-1];
-            j--;
+class Solution{
+public:
+    void traversal(std::vector<int>& nums){
+        for(int i=0;i<nums.size();i++){
+            std::cout << nums[i] << ' ';
         }
-        list[j]=e;
-        traversal(list);
+        std::cout << std::endl;
     }
-    traversal(list);
-}
 
-void BubbleSort(std::vector<int>& list){
-    for(int i=0;i<list.size();i++){
-        for(int j=list.size()-1;j>i;j--){
-            if(list[j]<list[j-1]){
-                int temp=list[j-1];
-                list[j-1]=list[j];
-                list[j]=temp;
+    void InsertionSort(std::vector<int>& nums){
+        for(int i=1;i<nums.size();i++){
+            int e=nums[i];
+            int j=i;
+            while(j>0 && nums[j-1]>e){
+                nums[j]=nums[j-1];
+                j--;
+            }
+            nums[j]=e;
+            traversal(nums);
+        }
+    }
+
+    void ShellSort(std::vector<int>& nums){
+        int d=nums.size()/2;
+        while(d!=0){
+            for(int i=d;i<nums.size();i++){
+                int e=nums[i];
+                int j=i;
+                while(j>=d && nums[j-d]>e){
+                    nums[j]=nums[j-d];
+                    j-=d;
+                }
+                nums[j]=e;
+            }
+            traversal(nums);
+            d/=2;
+        }
+    }
+
+    void BubbleSort(std::vector<int>& nums){
+        for(int i=0;i<nums.size();i++){
+            for(int j=nums.size()-1;j>i;j--){
+                if(nums[j]<nums[j-1]){
+                    int temp=nums[j-1];
+                    nums[j-1]=nums[j];
+                    nums[j]=temp;
+                }
+            }
+            traversal(nums);
+        }
+    }
+
+    void BubbleSortPlus(std::vector<int>& nums){
+        for(int i=0;i<nums.size();i++){
+            bool flag=true;
+            for(int j=nums.size()-1-i;j>0;j--){
+                if(nums[j]<nums[j-1]){
+                    flag=false;
+                    int temp=nums[j-1];
+                    nums[j-1]=nums[j];
+                    nums[j]=temp;
+                }
+            }
+            if(flag) break;
+            traversal(nums);
+        }
+    }
+
+    void WiggleSort(std::vector<int>& nums){
+        for(int i=0;i<nums.size()-1;i++){
+            if(i%2==0 && nums[i]<nums[i+1]){
+                std::swap(nums[i],nums[i+1]);
+            }
+            if(i%2==1 && nums[i]>nums[i+1]){
+                std::swap(nums[i],nums[i+1]);
+            }
+            traversal(nums);
+        }
+    }
+
+    void SelectionSort(std::vector<int>& nums){
+        for(int i=0;i<nums.size();i++){
+            int minindex=i;
+            for(int j=i;j<nums.size();j++){
+                if(nums[j]<nums[minindex]){
+                    minindex=j;
+                }
+            }
+            std::swap(nums[minindex],nums[i]);
+            traversal(nums);
+        }
+    }
+
+    void PancakeSort(std::vector<int>& nums){
+        for(int i=0;i<nums.size();i++){
+            int maxindex=0;
+            for(int j=0;j<nums.size()-i;j++){
+                if(nums[j]>nums[maxindex]){
+                    maxindex=j;
+                }
+            }
+            for(int j=0;j<=maxindex/2;j++){
+                std::swap(nums[j],nums[maxindex-j]);
+            }
+            for(int j=0;j<=(nums.size()-i-1)/2;j++){
+                std::swap(nums[j],nums[nums.size()-i-1-j]);
+            }
+            traversal(nums);
+        }
+    }
+
+    int partition(std::vector<int>& nums,int l,int r){
+        int i=l;
+        int j=r-1;
+        int m=nums[r];
+        while(i<=j){
+            while(i<=j && nums[i]<m){i++;}
+            while(i<=j && nums[j]>m){j--;}
+            if(i<=j){
+                int temp=nums[i];
+                nums[i++]=nums[j];
+                nums[j--]=temp;
             }
         }
-        traversal(list);
+        int temp=nums[i];
+        nums[i]=nums[r];
+        nums[r]=temp;
+        return i;
     }
-    traversal(list);
-}
 
-void SelectionSort(std::vector<int>& list){
-    for(int i=0;i<list.size();i++){
-        int minindex=i;
-        for(int j=i;j<list.size();j++){
-            if(list[j]<list[minindex]){
-                minindex=j;
-            }
-        }
-        std::swap(list[minindex],list[i]);
-        traversal(list);
-    }
-    traversal(list);
-}
-
-void PancakeSort(std::vector<int>& list){
-    for(int i=0;i<list.size();i++){
-        int maxindex=0;
-        for(int j=0;j<list.size()-i;j++){
-            if(list[j]>list[maxindex]){
-                maxindex=j;
-            }
-        }
-        for(int j=0;j<=maxindex/2;j++){
-            std::swap(list[j],list[maxindex-j]);
-        }
-        for(int j=0;j<=(list.size()-i-1)/2;j++){
-            std::swap(list[j],list[list.size()-i-1-j]);
-        }
-        traversal(list);
-    }
-    traversal(list);
-}
-
-void BubbleSortPlus(std::vector<int>& list){
-    for(int i=0;i<list.size();i++){
-        bool flag=true;
-        for(int j=list.size()-1-i;j>0;j--){
-            if(list[j]<list[j-1]){
-                flag=false;
-                int temp=list[j-1];
-                list[j-1]=list[j];
-                list[j]=temp;
-            }
-        }
-        if(flag) break;
-        traversal(list);
-    }
-    traversal(list);
-}
-
-int partition(std::vector<int>& list,int l,int r){
-    int i=l;
-    int j=r-1;
-    int m=list[r];
-    while(i<=j){
-        while(i<=j && list[i]<m){i++;}
-        while(i<=j && list[j]>m){j--;}
-        if(i<=j){
-            int temp=list[i];
-            list[i++]=list[j];
-            list[j--]=temp;
+    void QuickSort(std::vector<int>& nums,int l,int r){
+        if(l<r){
+            int i=partition(nums,l,r);
+            QuickSort(nums,l,i-1);
+            QuickSort(nums,i+1,r);
         }
     }
-    int temp=list[i];
-    list[i]=list[r];
-    list[r]=temp;
-    return i;
-}
-
-void QuickSort(std::vector<int>& list,int l,int r){
-    if(l<r){
-        int i=partition(list,l,r);
-        QuickSort(list,l,i-1);
-        QuickSort(list,i+1,r);
-    }
-}
+};
 
 int main(int argc,char **argv){
     std::string in;
@@ -127,25 +153,32 @@ int main(int argc,char **argv){
     }
     int choice;
     std::cin >> choice;
+    Solution sol;
     switch(choice){
         case 0:
-            InsertionSort(arr);
+            sol.InsertionSort(arr);
             break;
         case 1:
-            BubbleSort(arr);
+            sol.ShellSort(arr);
             break;
         case 2:
-            SelectionSort(arr);
+            sol.BubbleSort(arr);
             break;
         case 3:
-            PancakeSort(arr);
+            sol.SelectionSort(arr);
             break;
         case 4:
-            BubbleSortPlus(arr);
+            sol.PancakeSort(arr);
             break;
         case 5:
-            QuickSort(arr,0,arr.size()-1);
-            traversal(arr);
+            sol.BubbleSortPlus(arr);
+            break;
+        case 6:
+            sol.QuickSort(arr,0,arr.size()-1);
+            sol.traversal(arr);
+            break;
+        case 7:
+            sol.WiggleSort(arr);
             break;
     }
     return 0;
