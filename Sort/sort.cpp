@@ -71,6 +71,20 @@ public:
         }
     }
 
+    void KBubbleSort(std::vector<int>& nums,int& k){
+        for(int i=0;i<nums.size() && k>0;i++){
+            int min_index=i;
+            for(int j=i;j<std::min((int)nums.size(),i+k+1);j++){
+                if(nums[min_index]>nums[j]) min_index=j;
+            }
+            for(int j=min_index;j>i && k>0;j--){
+                std::swap(nums[j],nums[j-1]);
+                k--;
+                traversal(nums);
+            }
+        }
+    }
+
     void WiggleSort(std::vector<int>& nums){
         for(int i=0;i<nums.size()-1;i++){
             if(i%2==0 && nums[i]<nums[i+1]){
@@ -180,6 +194,12 @@ int main(int argc,char **argv){
         case 7:
             sol.WiggleSort(arr);
             break;
-    }
+        case 8:
+            int key;
+            std::cout << "k的值是：";
+            std::cin >> key;
+            sol.KBubbleSort(arr,key); 
+            break;
+        }
     return 0;
 }
