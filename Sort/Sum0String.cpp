@@ -1,6 +1,7 @@
 #include<iostream>
 #include<vector>
 #include<unordered_map>
+#include<algorithm>
 
 //哈希
 class Solution1{
@@ -29,7 +30,7 @@ public:
     }
 };
 
-//计数
+//前缀和+计数
 class Solution2{
 public:
     std::vector<int> Maxstring(const std::vector<int>& a){
@@ -65,12 +66,54 @@ public:
     }
 };
 
+//前缀和+比较
+class Solution3{
+public:
+    std::vector<int> Maxstring(const std::vector<int>& a){
+        if(a.empty()) return {};
+        std::vector<std::vector<int>> sum(a.size(), std::vector<int>{0, 0});
+        sum[0][0]=a.front();
+        for(int i=1;i<sum.size();i++){
+            sum[i][0]=sum[i-1][0]+a[i];
+            sum[i][1]=i;
+        }
+        std::sort(sum.begin(),sum.end());
+        int max_index=0;
+        int maxlen=0;
+        int std0=sum[0][0];
+        int std1=sum[0][1];
+        for(int i=1;i<sum.size();i++){
+            if(std0!=sum[i][0]){
+                int len=sum[i-1][1]-std1;
+                if(maxlen<len){
+                    maxlen=len;
+                    max_index=std1+1;
+                }
+                std0=sum[i][0];
+                std1=sum[i][1];
+            }
+        }
+        int len=sum.back()[1]-std1;
+            if(maxlen<len){
+                maxlen=len;
+                max_index=std1;
+        }
+        std::vector<int> r;
+        for(int i=0;i<maxlen;i++){
+            r.push_back(a[max_index+i]);
+        }
+        return r;
+    }
+};
+
 int main(){
     std::vector<int> arr={5,-1,-2,3,4,0,-6,1,5,1,-3,1,2,1};
     Solution1 sol1;
     Solution2 sol2;
+    Solution3 sol3;
     std::vector<int> res1=sol1.Maxstring(arr);
     std::vector<int> res2=sol2.Maxstring(arr);
+    std::vector<int> res3=sol3.Maxstring(arr);
     for(int i=0;i<res1.size()-1;i++){
         std::cout << res1[i] << ",";
     }
@@ -79,5 +122,9 @@ int main(){
         std::cout << res2[i] << ",";
     }
     std::cout << res2.back() << std::endl;
+    for(int i=0;i<res3.size()-1;i++){
+        std::cout << res3[i] << ",";
+    }
+    std::cout << res3.back() << std::endl;
     return 0;
 }
