@@ -60,12 +60,26 @@ private:
         if(n->LChild()==nullptr && n->RChild()==nullptr) return 1;
         return countLeaf(n->LChild())+countLeaf(n->RChild());
     }
+    LinkedNode<T>* preOrderDeSerialize(const std::vector<T>& a,int& idx,const T& nullmark){
+        if(idx>=a.size() || a[idx]==nullmark){
+            idx++;
+            return nullptr;
+        }
+        LinkedNode<T>* node=new LinkedNode<T>(a[idx++]);
+        node->SetLeft(preOrderDeSerialize(a,idx,nullmark));
+        node->SetRight(preOrderDeSerialize(a,idx,nullmark));
+        return node;
+    }
 public:
     BinaryTree(T v,LinkedNode<T>* l=nullptr,LinkedNode<T>* r=nullptr){
         root_=new LinkedNode<T>(v,l,r);
     }
-    BinaryTree(LinkedNode<T>* root):root_(root){}
-    BinaryTree():root_(nullptr){}
+    BinaryTree(const std::vector<T>& a,const T& nm){
+        if(a.empty()) root_=nullptr;
+        int idx=0;
+        root_=preOrderDeSerialize(a,idx,nm);
+    }
+    BinaryTree(LinkedNode<T>* root=nullptr):root_(root){}
     ~BinaryTree(){
         destroy(root_);
     }
@@ -121,7 +135,23 @@ BinaryTree<T> CompleteBinaryTree(const std::vector<T>& a){
     return BinaryTree<T>(nodes[1]);
 }
 
+template<typename T>
+LinkedNode<T>* PreInTravDeSerialize(const std::vector<T>& pre,const std::vector<T>& in,int lp,int rp,int lin,int rin){
+    LinkedNode<T>* root=nullptr;
+    if(lp<=rp){
+        root=new LinkedNode<T>(pre[lp]);
+        int i=lin;
+        while(in[i]!=pre[lp]){
+            i++;
+        }
+        root->SetLeft(PreInTravDeSerialize(pre,in,lp+1,lp+i-lin,lin,i-1));
+        root->SetRight(PreInTravDeSerialize(pre,in,lp+i-lin+1,rp,i+1,rin));
+    }
+    return root;
+}
+
 int main(int argc,char * argv[]){
+    //建树
     LinkedNode<int>* n1=new LinkedNode<int>(1);
     LinkedNode<int>* n2=new LinkedNode<int>(2);
     LinkedNode<int>* n3=new LinkedNode<int>(3,n1,n2);
@@ -140,6 +170,7 @@ int main(int argc,char * argv[]){
     std::cout << "结点数量：" << tree1.CountNode() << std::endl;
     std::cout << "叶子结点数量：" << tree1. CountLeaf() << std::endl;
     std::cout << "----------------------------" << std::endl;
+    //快速建完全二叉树
     std::vector<int> arr={1,2,3,4,5,6,7,8,9,10};
     BinaryTree<int> tree2=CompleteBinaryTree(arr);
     std::cout << "前序:";
@@ -153,5 +184,36 @@ int main(int argc,char * argv[]){
     std::cout << "树的高：" << tree2.GetHeight() << std::endl;
     std::cout << "结点数量：" << tree2.CountNode() << std::endl;
     std::cout << "叶子结点数量：" << tree2. CountLeaf() << std::endl;
+    std::cout << "----------------------------" << std::endl;
+    //前序序列反序列化
+    std::vector<char> arr2={'A','B','D','H','#','#','I','#','#','E','#','J','#','#','C','F','#','K','#','#','#'};
+    BinaryTree<char> tree3(arr2,'#');
+    std::cout << "前序:";
+    tree3.PreOrder();
+    std::cout << "中序:";
+    tree3.InOrder();
+    std::cout << "后序:";
+    tree3.PostOrder();
+    std::cout << "层序:";
+    tree3.LevelOrder();
+    std::cout << "树的高：" << tree3.GetHeight() << std::endl;
+    std::cout << "结点数量：" << tree3.CountNode() << std::endl;
+    std::cout << "叶子结点数量：" << tree3. CountLeaf() << std::endl;
+    std::cout << "----------------------------" << std::endl;
+    //根据前序遍历和中序遍历建树（反序列化）
+    std::vector<char> pre={'A','B','D','H','I','E','J','C','F','K'};
+    std::vector<char> in={'H','D','I','B','E','J','A','F','K','C'};
+    BinaryTree<char> tree4(PreInTravDeSerialize(pre,in,0,pre.size()-1,0,in.size()-1));
+    std::cout << "前序:";
+    tree4.PreOrder();
+    std::cout << "中序:";
+    tree4.InOrder();
+    std::cout << "后序:";
+    tree4.PostOrder();
+    std::cout << "层序:";
+    tree4.LevelOrder();
+    std::cout << "树的高：" << tree4.GetHeight() << std::endl;
+    std::cout << "结点数量：" << tree4.CountNode() << std::endl;
+    std::cout << "叶子结点数量：" << tree4. CountLeaf() << std::endl;
     return 0;
 }

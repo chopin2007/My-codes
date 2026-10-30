@@ -1,6 +1,7 @@
 #include<iostream>
 #include<stack>
 #include<vector>
+#include<queue>
 
 template<typename T>
 class LinkedNode{
@@ -86,6 +87,58 @@ public:
         }
         std::cout << std::endl;
     }
+    void LevelOrder()const{
+        if(root_==nullptr) return;
+        std::queue<LinkedNode<T>*> q;
+        q.push(root_);
+        while(!q.empty()){
+            LinkedNode<T>* ptr=q.front();
+            q.pop();
+            if(ptr!=nullptr){
+                std::cout << ptr->Value() << " ";
+                q.push(ptr->LChild());
+                q.push(ptr->RChild());
+            }
+        }
+        std::cout << std::endl;
+    }
+    int GetHeightBFS()const{
+        if(root_==nullptr) return 0;
+        std::queue<LinkedNode<T>*> q;
+        int h=0;
+        q.push(root_);
+        while(!q.empty()){
+            int levelsize=q.size();
+            for(int i=0;i<levelsize;i++){
+                LinkedNode<T>* ptr=q.front();
+                q.pop();
+                if(ptr->LChild()) q.push(ptr->LChild());
+                if(ptr->RChild()) q.push(ptr->RChild());
+            }
+            h++;
+        }
+        return h;
+    }
+    int GetHeightDFS()const{
+        if(root_==nullptr) return 0;
+        std::stack<LinkedNode<T>*> s;
+        LinkedNode<T>* p=root_;
+        int h=0;
+        int maxh=0;
+        while(p!=nullptr || !s.empty()){
+            while(p!=nullptr){
+                s.push(p);
+                p=p->LChild();
+                h++;
+            }
+            maxh=std::max(maxh,h);
+            p=s.top();
+            s.pop();
+            h--;
+            p=p->RChild();
+        }
+        return maxh;
+    }
 };
 
 template<typename T>
@@ -104,7 +157,11 @@ BinaryTree<T> CompleteBinaryTree(const std::vector<T>& a){
 }
 
 int main(int argc,char *argv[]){
-    std::vector<int> arr={1,2,3,4,5,6,7,8,9,10,11};
+    int n=30;
+    std::vector<int> arr;
+    for(int i=1;i<=n;i++){
+        arr.push_back(i);
+    }
     BinaryTree<int> tree1=CompleteBinaryTree(arr);
     std::cout << "前序：";
     tree1.PreOrder();
@@ -112,5 +169,9 @@ int main(int argc,char *argv[]){
     tree1.InOrder();
     std::cout << "后序：";
     tree1.PostOrder();
+    std::cout << "层序：";
+    tree1.LevelOrder();
+    std::cout << "树的高度(BFS):" << tree1.GetHeightBFS() << std::endl;
+    std::cout << "树的高度(DFS):" << tree1.GetHeightDFS() << std::endl;
     return 0;
 }
