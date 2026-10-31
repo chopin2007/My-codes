@@ -4,6 +4,7 @@
 #include<algorithm>
 #include<vector>
 #include<stack>
+#include<utility>
 
 std::unordered_map<std::string,int> hp;
 
@@ -18,6 +19,7 @@ public:
         if(hp.count(val_)) return hp[val_];
         else return std::stoi(val_);
     }
+    std::string SValue()const{return val_;}
     Node* Lchild()const{return lchild_;}
     Node* Rchild()const{return rchild_;}
     void SetValue(const std::string& v){val_=v;}
@@ -51,7 +53,7 @@ public:
     Node* Root()const{return root_;}
 };
 
-Tree CreatHuffmanTree(const std::vector<std::string>& a){
+Node* CreatHuffmanTree(const std::vector<std::string>& a){
     int n=a.size();
     std::vector<Node*> nodes;
     for(int i=0;i<n;i++){
@@ -69,15 +71,67 @@ Tree CreatHuffmanTree(const std::vector<std::string>& a){
         p->SetValue(std::to_string(p->Lchild()->Value()+p->Rchild()->Value()));
         nodes.push_back(p);
     }
-    return Tree(nodes.front());
+    return nodes.front();
 }
 
-void Decoding(const Tree& t,std::string s){
-    Node* p=t.Root();
-    int n=s.size();
-    for(int i=0;i<n-1;i++){
-        
+std::string Coding(const Tree& t,std::string s){
+    std::unordered_map<std::string,std::string> excel;
+    if(t.Root()->Lchild()==nullptr && t.Root()->Rchild()==nullptr){
+        excel[t.Root()->SValue()]="0";
+        std::string res="";
+        for(int i=0;i<s.size();i++){
+            std::string temp;
+            temp.push_back(s[i]);
+            res+=excel[temp];
+        }
+        return res;
     }
+    std::stack<std::pair<Node*,std::string>> st;
+    st.push({t.Root(),""});
+    while(!st.empty()){
+        std::pair<Node*,std::string> cur=st.top();
+        st.pop();
+        Node* p=cur.first;
+        std::string code=cur.second;
+        if(p->Lchild()==nullptr && p->Rchild()==nullptr){
+            excel[p->SValue()]=code;
+            continue;
+        }
+        if(p->Rchild()!=nullptr){
+            st.push({p->Rchild(),code+"1"});
+        }
+        if(p->Lchild()!=nullptr){
+            st.push({p->Lchild(),code+"0"});
+        }
+    }
+    std::string res="";
+    for(int i=0;i<s.size();i++){
+        std::string temp;
+        temp.push_back(s[i]);
+        res+=excel[temp];
+    }
+    return res;
+}
+
+std::string DeCoding(const Tree& t,std::string s){
+    std::string res="";
+    Node* p=t.Root();
+    if(p->Lchild()==nullptr && p->Rchild()==nullptr){
+        for(int i=0;i<(int)s.size();i++){
+            res+=p->SValue();
+        }
+        return res;
+    }
+    int n=s.size();
+    for(int i=0;i<n;i++){
+        if(s[i]=='0') p=p->Lchild();
+        else p=p->Rchild();
+        if(p->Lchild()==nullptr && p->Rchild()==nullptr){
+            res+=p->SValue();
+            p=t.Root();
+        }
+    }
+    return res;
 }
 
 int main(int argc,char * argv[]){
@@ -85,13 +139,17 @@ int main(int argc,char * argv[]){
     std::cin >> input;
     std::vector<std::string> sa;
     for(int i=0;i<input.size();i++){
-        std::string p=std::to_string(input[i]);
+        std::string p;
+        p.push_back(input[i]);
         if(!hp.count(p)){
             sa.push_back(p);
         }
         hp[p]++;
     }
-    Tree t1=CreatHuffmanTree(sa);
-    Decoding(t1,input);
+    Tree t1(CreatHuffmanTree(sa));
+    std::string co=Coding(t1,input);
+    std::cout << co << std::endl;
+    std::string deco=DeCoding(t1,co);
+    std::cout << deco << std::endl;
     return 0;
 }
