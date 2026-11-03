@@ -1,4 +1,5 @@
 #include<iostream>
+#include<vector>
 
 class Node{
 private:
@@ -14,12 +15,33 @@ public:
 
 class Tree{
 private:
+    std::vector<Node*> nodes;
     Node* root_;
 public:
-    Tree(Node* r):root_(r){}
-    ~Tree()
+    Tree(){
+        root_=nullptr;
+    }
+    Tree(int v){
+        nodes.push_back(new Node(v));
+        root_=nodes.front();
+    }
+    ~Tree(){
+        for(auto &x:nodes){
+            delete x;
+        }
+        root_=nullptr;
+    }
+    void addNode(int v,int pos){
+        if(pos<nodes.size()){
+            nodes.push_back(new Node(v,nodes[pos]));
+        }
+        else return;
+    }
+    void addNode(int v,Node* p){
+        nodes.push_back(new Node(v,p));
+    }
 };
 
 int main(int argc,char * argv[]){
-
+    
 }
